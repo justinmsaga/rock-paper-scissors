@@ -1,0 +1,90 @@
+@layer base {
+    :root {
+        --love: hsla(58, 100%, 60%, 1);
+        --inspo: orange;
+        --self: skyblue;
+        --ego: hsla(0, 100%, 40%, 1);
+        --home: hsla(142, 100%, 37%, 1);
+        --earth: hsla(37, 100%, 32%, 1);
+        --base: slategrey;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Helvetica, sans-serif;
+        background-color: var(--base);
+        color: var(--self);
+        font-size: 2rem;
+    }
+
+    h1 {
+        background: var(--home);
+        margin: 0;
+        padding-left: 1rem;
+    }
+
+    nav {
+        background-color: var(--self);
+    }
+    button {
+        font-size: 2rem;
+        padding: 2rem;
+        border: none;
+    }
+
+    span {
+        padding: 0.5rem;
+    }
+
+    p {
+        color: black;
+        margin-left: 1rem;
+    }
+
+    .center {
+        text-align: center;
+    }
+}
+
+@layer footer {
+    footer {
+        display: grid;
+        grid-template-areas:
+            "fire fire fire"
+            "rock paper scissors"
+            "water water water";
+        align-items: center;
+        justify-content: center;
+    }
+
+    /*.palette {
+        border: 1px solid var(--base);
+    }*/
+
+    .love {
+        background-color: var(--love);
+        grid-area: fire;
+    }
+    .inspo {
+        background-color: var(--inspo);
+    }
+    .self {
+        background-color: var(--self);
+        color: var(--ego);
+    }
+    .ego {
+        background-color: var(--ego);
+        grid-area: water;
+    }
+    .home {
+        background-color: var(--home);
+    }
+    .earth {
+        background-color: var(--earth);
+    }
+}
