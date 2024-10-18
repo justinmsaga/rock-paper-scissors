@@ -3,6 +3,7 @@
     <head>
         <title>sketch pad</title>
         <link rel="stylesheet" href="styles.css" />
+        <script src="./script.js" type="module"></script>
     </head>
 
     <body>
@@ -10,36 +11,46 @@
             <h1 class="palette inspo">want to play a game?</h1>
         </header>
 
-        <p>
-            <span class="love">fire</span>
-            beats everything except
-            <span class="ego">water</span>
-        </p>
+        <button id="showRules">rules</button>
+        <section class="hidden" id="rules">
+            <p>
+                <span class="love">fire</span>
+                beats everything except
+                <span class="ego">water</span>
+            </p>
+            <p>
+                you know the rules of
+                <span class="home">rock</span>
+                <span class="earth">paper</span>
+                <span class="self">scissors</span>
+            </p>
+            <p>
+                <span class="ego">water</span>
+                only beats
+                <span class="love">fire</span>
+            </p>
+        </section>
 
-        <p>
-            you know the rules of
-            <span class="home">rock</span>
-            <span class="earth">paper</span>
-            <span class="self">scissors</span>
-        </p>
+        <section id="playerCtrl">
+            <div class="mode">
+                <p>mode:</p>
+                <button id="auto">1 player</button>
+                <button id="play">2 player</button>
+            </div>
+            <h3 id="who">select mode</h3>
+        </section>
 
-        <p>
-            <span class="ego">water</span>
-            only beats
-            <span class="love">fire</span>
-        </p>
+        <section id="scoreBoard">
+            <p id="p1"></p>
+            <p id="p2"></p>
+        </section>
 
-        <p id="p1"></p>
-        <p id="p2"></p>
-        <p class="center" id="score"></p>
-
-        <footer>
+        <section class="board hidden">
             <button class="palette love" name="love">fire</button>
             <button class="palette home" name="home">rock</button>
             <button class="palette earth" name="earth">paper</button>
             <button class="palette self" name="self">scissors</button>
             <button class="palette ego" name="ego">water</button>
-        </footer>
-        <script src="./script.js"></script>
+        </section>
     </body>
 </html>

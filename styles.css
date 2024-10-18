@@ -28,12 +28,17 @@
         padding-left: 1rem;
     }
 
+    h2 {
+        margin: 0;
+        padding: 0;
+    }
+
     nav {
         background-color: var(--self);
     }
     button {
-        font-size: 2rem;
-        padding: 2rem;
+        font-size: 3rem;
+        padding: 0.5rem;
         border: none;
     }
 
@@ -43,7 +48,9 @@
 
     p {
         color: black;
-        margin-left: 1rem;
+        margin: 0.3rem 0 0 1rem;
+        padding: 0.5rem;
+        line-height: 2rem;
     }
 
     .center {
@@ -51,8 +58,14 @@
     }
 }
 
-@layer footer {
-    footer {
+@layer gameBoard {
+    .mode {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .board {
         display: grid;
         grid-template-areas:
             "fire fire fire"
@@ -61,10 +74,6 @@
         align-items: center;
         justify-content: center;
     }
-
-    /*.palette {
-        border: 1px solid var(--base);
-    }*/
 
     .love {
         background-color: var(--love);
@@ -86,5 +95,15 @@
     }
     .earth {
         background-color: var(--earth);
+    }
+}
+
+@layer ui {
+    .hidden {
+        display: none;
+    }
+
+    .under {
+        text-decoration: underline;
     }
 }

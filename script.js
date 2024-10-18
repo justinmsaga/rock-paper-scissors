@@ -1,94 +1,63 @@
-class player {
-  constructor(name, score) {
-    this.name = name;
-    this.score = score;
-    this.el = "";
-  }
-  win() {
-    this.score++;
-  }
-  setEl(set) {
-    this.el = set;
-  }
-}
+import player from "./players.js";
+import play from "./game.js";
 
-const play1 = new player("p1", 0);
-const play2 = new player("p2", 0);
+//players
+const play1 = new player("p1", 0, false);
+const play2 = new player("p2", 0, false);
 
-function updateScore(winner) {
-  switch (winner) {
-    case "P1 Wins":
-      play1.win();
-      break;
+//buttons
+const rulesBtn = document.getElementById("showRules");
+const playBtn = document.getElementById("play");
+const elementBtns = document.getElementsByClassName("palette");
+const autoBtn = document.getElementById("auto");
 
-    case "P2 Wins":
-      play2.win();
-      break;
+//game sections
+const board = document.querySelector(".board");
+const rules = document.getElementById("rules");
 
-    default:
-      break;
-  }
-}
+//text
+const playerInst = document.getElementById("who");
 
-const btnEl = document.getElementsByClassName("palette");
-const title = document.querySelector("h1");
-const scoreBoard = document.getElementById("score");
+//true = single player | false = multi player
+let gameType;
+
+//scoreboard
 const p1Score = document.getElementById("p1");
 const p2Score = document.getElementById("p2");
-let game = play();
-scoreBoard.innerHTML = "Player 1 GO!";
 
-function element(base, element, loser) {
-  function play(element) {
-    if (base === element) {
-      return "draw ";
-    } else if (base === "water") {
-      return element === "fire" ? "P1 Wins" : "P2 Wins";
-    } else {
-      return element === "fire" || element === loser ? "P2 Wins" : "P1 Wins";
-    }
-  }
-  return play;
+//game object
+let game;
+
+//set visibility
+function updateVisibility(sect) {
+  sect.classList.remove("hidden");
 }
 
-function setP1(el) {
-  switch (el) {
-    case "fire":
-      play1.setEl(element("fire", el, "water"));
-      break;
-    case "water":
-      play1.setEl(element("water", el, ""));
-      break;
-    case "rock":
-      play1.setEl(element("rock", el, "paper"));
-      break;
-    case "paper":
-      play1.setEl(element("paper", el, "scissors"));
-      break;
-    case "scissors":
-      play1.setEl(element("scissors", el, "rock"));
-      break;
-  }
-}
+//button event handlers
 
-function play() {
-  let p1Select = "";
-  function player(lmnt) {
-    if (p1Select === "") {
-      scoreBoard.innerHTML = "Player 2 GO!";
-      p1Select = setP1(lmnt);
-    } else {
-      updateScore(play1.el(lmnt));
-      scoreBoard.innerHTML = `${play1.el(lmnt)} <span class="inspo">Player 1 GO</span>`;
-      p1Score.textContent = `Player 1 score: ${play1.score}`;
-      p2Score.textContent = `Player 2 score: ${play2.score}`;
-      p1Select = "";
-    }
-  }
-  return player;
-}
+//show rules
+rulesBtn.addEventListener("click", () => {
+  updateVisibility(rules);
+});
 
-for (let b of btnEl) {
+//show game one player
+autoBtn.addEventListener("click", () => {
+  updateVisibility(board);
+  playerInst.innerHTML = `1 player mode selected`;
+  gameType = true;
+  game = play(play1, play2, p1Score, p2Score, gameType, playerInst);
+});
+
+//show game two player
+playBtn.addEventListener("click", () => {
+  updateVisibility(board);
+  playerInst.innerHTML = `2 player mode selected`;
+  gameType = false;
+  game = play(play1, play2, p1Score, p2Score, gameType, playerInst);
+});
+
+//player inputs
+for (let b of elementBtns) {
   b.addEventListener("click", () => {
     game(b.innerHTML);
   });
