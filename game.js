@@ -1,6 +1,8 @@
 import player from "./players.js";
 
 const agent = new player("a1", 0, true);
+let p1Auto = false;
+let p2Auto = false;
 
 function updateScore(winner, p1, p2) {
   switch (winner) {
@@ -21,10 +23,10 @@ function element(base, element, loser) {
   function play(element) {
     if (base === element) {
       return "draw ";
-    } else if (base === "water") {
-      return element === "fire" ? "P1 Wins" : "P2 Wins";
+    } else if (base === "🌊") {
+      return element === "🔥" ? "P1 Wins" : "P2 Wins";
     } else {
-      return element === "fire" || element === loser ? "P2 Wins" : "P1 Wins";
+      return element === "🔥" || element === loser ? "P2 Wins" : "P1 Wins";
     }
   }
   return play;
@@ -32,44 +34,71 @@ function element(base, element, loser) {
 
 function setP1(el, p1) {
   switch (el) {
-    case "fire":
-      p1.setEl(element("fire", el, "water"));
+    case "🔥":
+      p1.setEl(element("🔥", el, "🌊"));
       break;
-    case "water":
-      p1.setEl(element("water", el, ""));
+    case "🌊":
+      p1.setEl(element("🌊", el, ""));
       break;
-    case "rock":
-      p1.setEl(element("rock", el, "paper"));
+    case "🪨":
+      p1.setEl(element("🪨", el, "🧻"));
       break;
-    case "paper":
-      p1.setEl(element("paper", el, "scissors"));
+    case "🧻":
+      p1.setEl(element("🧻", el, "✂️"));
       break;
-    case "scissors":
-      p1.setEl(element("scissors", el, "rock"));
+    case "✂️":
+      p1.setEl(element("✂️", el, "🪨"));
       break;
   }
 }
 
-function play(p1, p2, p1Scr, p2Scr, gmeType, inst) {
+//setup player instruction html section then update instruction based on game state
+function updateInstruction(pgSection) {
+  const section = pgSection;
+  function updateText(txt) {
+    const toDisplay = document.createElement("p");
+    toDisplay.innerHTML = txt;
+    //const randBtn = document.createElement("button");
+    //randBtn.innerHTML = "rand";
+    section.replaceChildren(toDisplay);
+  }
+  return updateText;
+}
+
+//setup score html section then update score, text will depend on if agent is active
+function updateScoreBoard(scoreSection) {
+  const section = scoreSection;
+  function updateScoreBoard(p1Score, p2Score, agnt) {
+    const scoreTxt = agnt
+      ? `<p> Player 1 score: ${p1Score}</p>
+      <p> Agent score: ${p2Score}</p>`
+      : `<p> Player 1 score: ${p1Score}</p>
+    <p> Player 2 score: ${p2Score}</p>`;
+    section.innerHTML = scoreTxt;
+  }
+  return updateScoreBoard;
+}
+
+function play(p1, p2, score, gmeType, inst) {
   let p1Select = "";
+  const instruction = updateInstruction(inst);
+  const scoreboard = updateScoreBoard(score);
   function player(lmnt) {
     if (p1Select === "") {
-      inst.innerHTML = `<span class="inspo">Player 2 GO</span> `;
+      instruction(`<span class="inspo">Player 2 GO</span> `);
       p1Select = setP1(lmnt, p1);
       if (gmeType) {
         const agentSel = agent.autoSelect();
         updateScore(p1.el(agentSel), p1, agent);
-        inst.innerHTML = `${p1.el(agentSel)} Player 1 GO [1 player mode]`;
-        p1Scr.innerHTML = `Player 1 score: ${p1.score}`;
-        p2Scr.innerHTML = `agent score: ${agent.score}`;
+        instruction(`${p1.el(agentSel)} Player 1 GO [1 player mode]`);
+        scoreboard(p1.score, agent.score, true);
         p1Select = "";
       }
     } else {
       const gg = p1.el(lmnt);
       updateScore(gg, p1, p2);
-      inst.innerHTML = `${gg} Player 1 GO [2 player mode]`;
-      p1Scr.innerHTML = `Player 1 score: ${p1.score}`;
-      p2Scr.innerHTML = `Player 2 score: ${p2.score}`;
+      instruction(`${gg} Player 1 GO [2 player mode]`);
+      scoreboard(p1.score, p2.score, false);
       p1Select = "";
     }
   }

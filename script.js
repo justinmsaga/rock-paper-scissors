@@ -22,8 +22,7 @@ const playerInst = document.getElementById("who");
 let gameType;
 
 //scoreboard
-const p1Score = document.getElementById("p1");
-const p2Score = document.getElementById("p2");
+const scoreBoard = document.getElementById("scoreBoard");
 
 //game object
 let game;
@@ -40,20 +39,24 @@ rulesBtn.addEventListener("click", () => {
   updateVisibility(rules);
 });
 
+//setup game depending on game type,
+//true = one player | false = two player
+function gameSetup(type) {
+  updateVisibility(board);
+  playerInst.innerHTML = type
+    ? `1 player mode selected`
+    : `2 player mode selected`;
+  game = play(play1, play2, scoreBoard, type, playerInst);
+}
+
 //show game one player
 autoBtn.addEventListener("click", () => {
-  updateVisibility(board);
-  playerInst.innerHTML = `1 player mode selected`;
-  gameType = true;
-  game = play(play1, play2, p1Score, p2Score, gameType, playerInst);
+  gameSetup(true);
 });
 
 //show game two player
 playBtn.addEventListener("click", () => {
-  updateVisibility(board);
-  playerInst.innerHTML = `2 player mode selected`;
-  gameType = false;
-  game = play(play1, play2, p1Score, p2Score, gameType, playerInst);
+  gameSetup(false);
 });
 
 //player inputs
