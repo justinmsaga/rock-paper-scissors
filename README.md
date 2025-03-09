@@ -1,5 +1,5 @@
 # rock-paper-scissors
-experments in text based game development
+experiments in text based game development
 
 live site: https://sk8.studio/play
 
