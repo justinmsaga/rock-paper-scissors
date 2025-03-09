@@ -1,22 +1,14 @@
 class player {
-  constructor(name, score, auto) {
+  constructor(name, score) {
     this.name = name;
     this.score = score;
-    this.el = "";
-    this.auto = auto;
+    this.agentScore = 0;
   }
   win() {
     this.score++;
   }
-  setEl(set) {
-    this.el = set;
-  }
 
-  toggleAuto() {
-    this.auto ? false : true;
-  }
-
-  autoSelect() {
+  agent() {
     const selection = ["🔥", "🪨", "🧻", "✂️", "🌊"];
     const num = Math.floor(Math.random() * 100);
     if (num < 33) {

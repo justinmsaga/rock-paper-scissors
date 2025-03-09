@@ -1,108 +1,80 @@
 import player from "./players.js";
 
-const agent = new player("a1", 0, true);
-let p1Auto = false;
-let p2Auto = false;
-
-function updateScore(winner, p1, p2) {
-  switch (winner) {
-    case "P1 Wins":
-      p1.win();
-      break;
-
-    case "P2 Wins":
-      p2.win();
-      break;
-
-    default:
-      break;
+class playRound {
+  constructor() {
+    this.p1 = new player("p1", 0);
+    this.p2 = new player("p1", 0);
+    this.mode = ""; //true = 1p, false = 2p
+    this.round = true; // true = round 1, false = round 2
+    this.base = "";
+    this.loser = "";
+    this.winner = "";
+    this.roundState = "";
   }
-}
 
-function element(base, element, loser) {
-  function play(element) {
-    if (base === element) {
-      return "draw ";
-    } else if (base === "🌊") {
-      return element === "🔥" ? "P1 Wins" : "P2 Wins";
+  //compare p1 and p2 element then update winner
+  battle(p2Elem) {
+    if (this.base === p2Elem) {
+      return "draw";
+    } else if (this.base === "🌊") {
+      return p2Elem === "🔥" ? "p1 wins" : this.mode ? "agent wins" : "p2 wins";
     } else {
-      return element === "🔥" || element === loser ? "P2 Wins" : "P1 Wins";
+      return p2Elem === "🔥" || p2Elem === this.loser
+        ? this.mode
+          ? "agent wins"
+          : "p2 wins"
+        : "p1 wins";
     }
   }
-  return play;
-}
 
-function setP1(el, p1) {
-  switch (el) {
-    case "🔥":
-      p1.setEl(element("🔥", el, "🌊"));
-      break;
-    case "🌊":
-      p1.setEl(element("🌊", el, ""));
-      break;
-    case "🪨":
-      p1.setEl(element("🪨", el, "🧻"));
-      break;
-    case "🧻":
-      p1.setEl(element("🧻", el, "✂️"));
-      break;
-    case "✂️":
-      p1.setEl(element("✂️", el, "🪨"));
-      break;
+  //set p1 and loser element
+  setP1(elem) {
+    this.base = elem;
+    switch (elem) {
+      case "🔥":
+        this.loser = "🌊";
+        break;
+
+      case "🪨":
+        this.loser = "🧻";
+        break;
+
+      case "🧻":
+        this.loser = "✂️";
+        break;
+
+      case "✂️":
+        this.loser = "🪨";
+        break;
+
+      default:
+        this.loser = "";
+        break;
+    }
   }
-}
 
-//setup player instruction html section then update instruction based on game state
-function updateInstruction(pgSection) {
-  const section = pgSection;
-  function updateText(txt) {
-    const toDisplay = document.createElement("p");
-    toDisplay.innerHTML = txt;
-    //const randBtn = document.createElement("button");
-    //randBtn.innerHTML = "rand";
-    section.replaceChildren(toDisplay);
-  }
-  return updateText;
-}
-
-//setup score html section then update score, text will depend on if agent is active
-function updateScoreBoard(scoreSection) {
-  const section = scoreSection;
-  function updateScoreBoard(p1Score, p2Score, agnt) {
-    const scoreTxt = agnt
-      ? `<p> Player 1 score: ${p1Score}</p>
-      <p> Agent score: ${p2Score}</p>`
-      : `<p> Player 1 score: ${p1Score}</p>
-    <p> Player 2 score: ${p2Score}</p>`;
-    section.innerHTML = scoreTxt;
-  }
-  return updateScoreBoard;
-}
-
-function play(p1, p2, score, gmeType, inst) {
-  let p1Select = "";
-  const instruction = updateInstruction(inst);
-  const scoreboard = updateScoreBoard(score);
-  function player(lmnt) {
-    if (p1Select === "") {
-      instruction(`<span class="inspo">Player 2 GO</span> `);
-      p1Select = setP1(lmnt, p1);
-      if (gmeType) {
-        const agentSel = agent.autoSelect();
-        updateScore(p1.el(agentSel), p1, agent);
-        instruction(`${p1.el(agentSel)} Player 1 GO [1 player mode]`);
-        scoreboard(p1.score, agent.score, true);
-        p1Select = "";
+  //initialse game mode and cycle through rounds
+  play(mode) {
+    //set mode 1p = true, 2p = false
+    this.mode = mode;
+    function round(elem) {
+      if (this.round) {
+        this.setP1(elem);
+        //reset round and winner
+        this.round = false;
+        this.winner = "";
+      } else {
+        //if 1p mode use agent for battle
+        this.winner = this.mode
+          ? this.battle(this.p1.agent())
+          : this.battle(elem);
+        //reset round
+        this.round = true;
       }
-    } else {
-      const gg = p1.el(lmnt);
-      updateScore(gg, p1, p2);
-      instruction(`${gg} Player 1 GO [2 player mode]`);
-      scoreboard(p1.score, p2.score, false);
-      p1Select = "";
     }
+
+    this.roundState = round;
   }
-  return player;
 }
 
-export default play;
+export default playRound;

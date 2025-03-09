@@ -1,67 +1,60 @@
-import player from "./players.js";
-import play from "./game.js";
+import { createElem, createBtn, addToTag } from "./helper.js";
+import gameStates from "./states.js";
+import playRound from "./game.js";
+//game starter
+const foot = document.querySelector("footer");
 
-//players
-const play1 = new player("p1", 0, false);
-const play2 = new player("p2", 0, false);
+//game area
+const main = document.querySelector("main");
 
-//buttons
-const rulesBtn = document.getElementById("showRules");
-const playBtn = document.getElementById("play");
-const elementBtns = document.getElementsByClassName("palette");
-const autoBtn = document.getElementById("auto");
+//setup game area
+const play = game(main);
 
-//game sections
-const board = document.querySelector(".board");
-const rules = document.getElementById("rules");
+//game
+const playBall = new playRound();
 
-//text
-const playerInst = document.getElementById("who");
+//start game
+foot.addEventListener("click", () => {
+  play("go");
+});
 
-//true = single player | false = multi player
-let gameType;
+//game board states
+const states = gameStates(play, playBall);
 
-//scoreboard
-const scoreBoard = document.getElementById("scoreBoard");
-
-//game object
-let game;
-
-//set visibility
-function updateVisibility(sect) {
-  sect.classList.remove("hidden");
+//initialise and update game board
+function game(board) {
+  //update board based on state
+  function play(state) {
+    if (state === "end") {
+      //show winner
+      end();
+    } else {
+      if (state === "round") {
+        //for round state show which player turn
+        addToTag(
+          board,
+          [createElem("h2", playBall.round ? "p1 go" : "p2 go", ["attention"])],
+          true
+        );
+        //display round
+        addToTag(board, states[state], false);
+      } else {
+        //display other states
+        addToTag(board, states[state], true);
+      }
+    }
+  }
+  return play;
 }
 
-//button event handlers
-
-//show rules
-rulesBtn.addEventListener("click", () => {
-  updateVisibility(rules);
-});
-
-//setup game depending on game type,
-//true = one player | false = two player
-function gameSetup(type) {
-  updateVisibility(board);
-  playerInst.innerHTML = type
-    ? `1 player mode selected`
-    : `2 player mode selected`;
-  game = play(play1, play2, scoreBoard, type, playerInst);
-}
-
-//show game one player
-autoBtn.addEventListener("click", () => {
-  gameSetup(true);
-});
-
-//show game two player
-playBtn.addEventListener("click", () => {
-  gameSetup(false);
-});
-
-//player inputs
-for (let b of elementBtns) {
-  b.addEventListener("click", () => {
-    game(b.innerHTML);
-  });
+//winner state
+function end() {
+  addToTag(
+    main,
+    [
+      createElem("p", playBall.winner, ["highlight"]),
+      createBtn("play again?", [], "again", play, "go"),
+    ],
+    true
+  );
 }
