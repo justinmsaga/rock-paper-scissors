@@ -1,60 +1,40 @@
-import { createElem, createBtn, addToTag } from "./helper.js";
-import gameStates from "./states.js";
-import playRound from "./game.js";
-//game starter
-const foot = document.querySelector("footer");
+import play from "./play.js";
+import { addToTag, createElement, createButtonContainer } from "./helper.js";
 
-//game area
-const main = document.querySelector("main");
+const foot = footer(document.querySelector("footer"));
+foot(true);
 
-//setup game area
-const play = game(main);
+function footer(foot) {
+  //colour pallete options
+  const pallette = ["love", "self", "ego", "earth", "inspo", "home"];
 
-//game
-const playBall = new playRound();
+  //game section
+  const playArea = createElement("section", "", ["playArea"]);
 
-//start game
-foot.addEventListener("click", () => {
-  play("go");
-});
+  //instructions
+  const clickHere = createElement("p", "🔻click to start🔻", []);
 
-//game board states
-const states = gameStates(play, playBall);
+  function start() {
+    play(playArea);
+    addToTag(foot, [startGame, playArea], true);
+  }
 
-//initialise and update game board
-function game(board) {
-  //update board based on state
-  function play(state) {
-    if (state === "end") {
-      //show winner
-      end();
+  //start game button from colour
+  const startGame = createButtonContainer(
+    ["startContainer"],
+    pallette.map((p) => {
+      return createElement("div", "", [p, "play"]);
+    }),
+    start
+  );
+
+  //setup game if game option is true
+  function updateFoot(game) {
+    if (game) {
+      addToTag(foot, [clickHere, startGame]);
     } else {
-      if (state === "round") {
-        //for round state show which player turn
-        addToTag(
-          board,
-          [createElem("h2", playBall.round ? "p1 go" : "p2 go", ["attention"])],
-          true
-        );
-        //display round
-        addToTag(board, states[state], false);
-      } else {
-        //display other states
-        addToTag(board, states[state], true);
-      }
+      addToTag(foot, [startGame]);
     }
   }
-  return play;
-}
-
-//winner state
-function end() {
-  addToTag(
-    main,
-    [
-      createElem("p", playBall.winner, ["highlight"]),
-      createBtn("play again?", [], "again", play, "go"),
-    ],
-    true
-  );
+  return updateFoot;
 }

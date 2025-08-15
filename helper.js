@@ -1,5 +1,5 @@
 //inputs(element type, text context, css styles to add, element id)
-function createElem(type, text, styles, name) {
+function createElement(type, text, styles, name) {
   const elem = document.createElement(type);
   elem.textContent = text;
   if (name) {
@@ -12,24 +12,9 @@ function createElem(type, text, styles, name) {
   return elem;
 }
 
-//make a container
-function createDiv(addToDiv) {
-  const elem = document.createElement("div");
-  addToTag(elem, addToDiv, false);
-
-  return elem;
-}
-
 //create button
-function createBtn(text, styles, name, handle, cmd) {
-  const btn = document.createElement("button");
-  btn.textContent = text;
-  if (name) {
-    btn.setAttribute("id", name);
-  }
-  for (let s of styles) {
-    btn.classList.add(s);
-  }
+function createBtn(text, styles, handle, cmd, name) {
+  const btn = createElement("button", text, styles, name);
   btn.addEventListener("click", () => {
     handle(cmd);
   });
@@ -37,38 +22,50 @@ function createBtn(text, styles, name, handle, cmd) {
   return btn;
 }
 
-//mode button true = 1p, false = 2p
-function modeBtn(text, name, mode, state, ball) {
-  const btn = createBtn(text, [], name, state, "rules");
-  btn.addEventListener("click", () => {
-    //set game mode
-    ball.play(mode);
-  });
+// create link
+function createLink(text, linkTo, styles, name) {
+  const link = createElement("a", text, styles, name);
+  link.setAttribute("href", linkTo);
+
+  return link;
+}
+
+//create media
+function createMedia(type, alt, styles, source, show, name) {
+  const media = createElement(type, "", styles, name);
+  media.setAttribute("src", source);
+  media.setAttribute("alt", alt);
+  media.setAttribute("controls", "controls");
+  if (show) {
+    media.setAttribute("encrypted-media");
+  }
+
+  return media;
+}
+
+//make element container
+function createContainer(type, text, styles, comps, name) {
+  const elem = createElement(type, text, styles, name);
+  addToTag(elem, comps, false);
+
+  return elem;
+}
+
+//button with elements inside
+function createButtonContainer(styles, comps, handle, cmd, name) {
+  const btn = createBtn("", styles, handle, cmd, name);
+  addToTag(btn, comps);
 
   return btn;
 }
 
-// element select
-function elementBtn(elem, name, handle, ball) {
-  const btn = createElem("button", elem, [], name);
-  btn.addEventListener("click", () => {
-    //set elem in game for player
-    ball.roundState(elem);
-    if (ball.mode) {
-      //if mode is 1p use agent select for p2 then continue to score
-      ball.roundState("");
-      handle("end");
-    } else if (ball.round) {
-      //end of round 2, continue to end
-      handle("end");
-    } else {
-      //continue to round 2
-      handle("round");
-    }
-  });
-  return btn;
-}
+//link with elements inside
+function createLinkContainer(styles, comps, text, linkTo, name) {
+  const link = createLink(text, linkTo, styles, name);
+  addToTag(link, comps, false);
 
+  return link;
+}
 //add children to html element, if clear is true remove all elements in tag
 function addToTag(tag, comps, clear) {
   if (clear) {
@@ -79,4 +76,35 @@ function addToTag(tag, comps, clear) {
   }
 }
 
-export { createElem, createBtn, addToTag, modeBtn, elementBtn, createDiv };
+export {
+  createElement,
+  createBtn,
+  createLink,
+  createMedia,
+  addToTag,
+  createContainer,
+  createButtonContainer,
+  createLinkContainer,
+  addChosen,
+  setChosen,
+};
+
+//-------------utility
+
+//add chosen option to selectors
+function addChosen(selectors) {
+  const chosenSelectors = selectors.map((s) => {
+    return { ...s, chosen: false };
+  });
+  return chosenSelectors;
+}
+
+//set chosen selectors
+function setChosen(selected, selectors) {
+  const chosenSelectors = selectors.map((s) => {
+    return s.title === selected
+      ? { ...s, chosen: true }
+      : { ...s, chosen: false };
+  });
+  return chosenSelectors;
+}
